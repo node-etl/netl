@@ -9,7 +9,7 @@ const log = Tools.log;
 console.log();
 print("> ---------------------\n> nETL V0.1 © 2017\n> ---------------------\n");
 const netlConfig = {};
-setLogPath(path.join(__dirname, `./netl.log`));
+setLogPath(path.join(__dirname, `./var/log/netl.log`));
 const netl = NETL(netlConfig);
 
 /* Load Extraction Modules */
