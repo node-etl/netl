@@ -1,25 +1,30 @@
 'use strict';
 const path = require('path');
 const jsonfile = require('jsonfile');
-const NETL = require('../netl-task-manager/index.js');
-const Tools = require('../netl-tools/index.js');
+const NETL = require('./lib/task-manager');
+const Tools = require('./lib/tools');
 const log = Tools.log;
 
 // Start the application
 console.log();
 print("> ---------------------\n> nETL V0.1 © 2017\n> ---------------------\n");
 const netlConfig = {};
-setLogPath('/log/netl.log');
+setLogPath(path.join(__dirname, `./netl.log`));
 const netl = NETL(netlConfig);
 
-// Load std library of modules
-netl.loadExtractionModule(require('../netl-extract-flatfile/index.js'));
-netl.loadTransformationModule(require('../netl-trans-create-obj-field/index.js'));
-netl.loadTransformationModule(require('../netl-trans-filter/index.js'));
-netl.loadTransformationModule(require('../netl-trans-text-line-to-obj/index.js'));
-netl.loadTransformationModule(require('../netl-trans-whitelist/index.js'));
-netl.loadTransformationModule(require('../netl-trans-dynamic-filter/index.js'));
-netl.loadLoadModule(require('../netl-load-couchdb/index.js'));
+/* Load Extraction Modules */
+
+/* Load Transformation Modules */
+
+/* Load Load Modules */
+
+// netl.loadExtractionModule(require('../netl-extract-flatfile/index.js'));
+// netl.loadTransformationModule(require('../netl-trans-create-obj-field/index.js'));
+// netl.loadTransformationModule(require('../netl-trans-filter/index.js'));
+// netl.loadTransformationModule(require('../netl-trans-text-line-to-obj/index.js'));
+// netl.loadTransformationModule(require('../netl-trans-whitelist/index.js'));
+// netl.loadTransformationModule(require('../netl-trans-dynamic-filter/index.js'));
+// netl.loadLoadModule(require('../netl-load-couchdb/index.js'));
 
 /*
  ******************************************
