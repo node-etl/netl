@@ -8,9 +8,9 @@ const log = Tools.log;
 // Start the application
 console.log();
 print("> ---------------------\n> nETL V0.1 © 2017\n> ---------------------\n");
-const netlConfig = {};
-setLogPath(path.join(__dirname, `./var/log/netl.log`));
-const netl = NETL(netlConfig);
+const options = jsonfile.readFileSync("./config.json");;
+setLogPath(path.join(__dirname, options.log_path));
+const netl = NETL(options);
 
 /* Load Extraction Modules */
 
