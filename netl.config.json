@@ -6,6 +6,7 @@
     "transformations": [
         "./lib/transformations/create-attributes-obj",
         "./lib/transformations/dynamic-filter-obj",
+        "./lib/transformations/filter-obj",
         "./lib/transformations/filter-obj-attributes",
         "./lib/transformations/text-line-to-obj"
     ],
