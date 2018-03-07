@@ -28,11 +28,11 @@ const log = Tools.log;
 
     /* Load Transformation Modules */
     options.transformations.forEach(function(filePath) {
-        netl.loadExtractionModule(require(filePath));
+        netl.loadTransformationModule(require(filePath));
     });
     /* Load Load Modules */
     options.loads.forEach(function(filePath) {
-        netl.loadExtractionModule(require(filePath));
+        netl.loadLoadModule(require(filePath));
     });
 
     /*
@@ -101,7 +101,7 @@ const log = Tools.log;
                 cmd2 = (inputs[1]) ? inputs[1].toUpperCase() : null;
                 switch (cmd2) {
                     case 'TASK':
-                        fPath = (inputs[2]) ? path.resolve(inputs[2]) : null;
+                        fPath = (inputs[2]) ? path.join(__dirname, inputs[2]) : null;
                         if (fPath) {
                             loadTask(fPath);
                             break;
