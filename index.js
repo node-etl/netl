@@ -1,5 +1,7 @@
 'use strict';
-const path = require('path');
+const path = require('path').posix;
+path.sep = "/";
+__dirname = __dirname.split(/\\/g).join('/');
 const jsonfile = require('jsonfile');
 const TaskManager = require('./lib/task-manager');
 const Tools = require('./lib/tools');
@@ -13,7 +15,8 @@ const log = Tools.log;
 
     // Set log path
     const options = jsonfile.readFileSync("./netl.config.json");
-    setLogPath(path.join(__dirname, options.log_path));
+    const logPath = path.join(__dirname, options.log_path);
+    setLogPath(logPath);
 
     // Load the task manager
     const netl = TaskManager(options);
