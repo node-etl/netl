@@ -1,16 +1,21 @@
 'use strict';
 const path = require('path');
 const jsonfile = require('jsonfile');
-const NETL = require('./lib/task-manager');
+const TaskManager = require('./lib/task-manager');
 const Tools = require('./lib/tools');
 const log = Tools.log;
 
 // Start the application
+const npmConfig = jsonfile.readFileSync("./package.json");
 console.log();
-print("> ---------------------\n> nETL V0.1 © 2017\n> ---------------------\n");
-const options = jsonfile.readFileSync("./netl.config.json");;
+print(`> ---------------------\n> ${npmConfig.name} V${npmConfig.version} © ${npmConfig.copyright}\n> ---------------------\n`);
+
+// Set log path
+const options = jsonfile.readFileSync("./netl.config.json");
 setLogPath(path.join(__dirname, options.log_path));
-const netl = NETL(options);
+
+// Load the task manager
+const netl = TaskManager(options);
 
 /* Load Extraction Modules */
 options.extractions.forEach(function(filePath) {
@@ -63,7 +68,7 @@ function loadTask(taskPath) {
     } catch (error) {
         print("Error running task: " + error);
     };
-}
+};
 
 /**
  * Prints to the console in a friendly way
