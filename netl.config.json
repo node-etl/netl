@@ -1,0 +1,15 @@
+{
+    "log_path": "./var/log/netl.log",
+    "extractions": [
+        "./lib/extractions/flatfile"
+    ],
+    "transformations": [
+        "./lib/transformations/create-attribute-obj",
+        "./lib/transformations/dynamic-filter-obj",
+        "./lib/transformations/filter-obj-attribute",
+        "./lib/transformations/text-line-to-obj"
+    ],
+    "loads": [
+        "./lib/loads/couchdb"
+    ]
+}

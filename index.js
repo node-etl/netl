@@ -8,23 +8,23 @@ const log = Tools.log;
 // Start the application
 console.log();
 print("> ---------------------\n> nETL V0.1 © 2017\n> ---------------------\n");
-const options = jsonfile.readFileSync("./config.json");;
+const options = jsonfile.readFileSync("./netl.config.json");;
 setLogPath(path.join(__dirname, options.log_path));
 const netl = NETL(options);
 
 /* Load Extraction Modules */
+options.extractions.forEach(function(filePath) {
+    netl.loadExtractionModule(require(filePath));
+});
 
 /* Load Transformation Modules */
-
+options.transformations.forEach(function(filePath) {
+    netl.loadExtractionModule(require(filePath));
+});
 /* Load Load Modules */
-
-// netl.loadExtractionModule(require('../netl-extract-flatfile/index.js'));
-// netl.loadTransformationModule(require('../netl-trans-create-obj-field/index.js'));
-// netl.loadTransformationModule(require('../netl-trans-filter/index.js'));
-// netl.loadTransformationModule(require('../netl-trans-text-line-to-obj/index.js'));
-// netl.loadTransformationModule(require('../netl-trans-whitelist/index.js'));
-// netl.loadTransformationModule(require('../netl-trans-dynamic-filter/index.js'));
-// netl.loadLoadModule(require('../netl-load-couchdb/index.js'));
+options.loads.forEach(function(filePath) {
+    netl.loadExtractionModule(require(filePath));
+});
 
 /*
  ******************************************
