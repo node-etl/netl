@@ -65,24 +65,21 @@ const log = Tools.log;
             configFile.forEach(function(configuration, i, arr) {
                 print('Creating new task : ' + configuration.ID);
                 log.info('Creating new task : ' + configuration.ID);
-                try {
-                    netl.taskManager.newTask(configuration)
-                        .then(function(result) {
-                            log.info(result);
-                            print(result);
-                        })
-                        .catch(function(error) {
-                            throw error;
+                netl.taskManager.newTask(configuration)
+                    .then(function(result) {
+                        log.info(result);
+                        print(result);
+                    })
+                    .catch(function(error) {
+                        netl.taskManager.killTask(configuration.ID, function() {
+                            log.error(`Error running task ${configuration.ID}. Task Killed:\n` + error);
+                            print(`Error running task ${configuration.ID}. Task Killed:\n` + error);
                         });
-                } catch (error) {
-                    netl.taskManager.killTask(configuration.ID, function() {
-                        throw new Error(`Error running task ${configuration.ID}. Task Killed: ` + error.stack);
                     });
-                };
             });
         } catch (error) {
-            log.error(error.stack);
-            print("Error running task: " + error.message);
+            log.error("Error reading config file:\n" + error);
+            print("Error reading config file:\n" + error);
         };
     };
 
