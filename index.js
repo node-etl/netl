@@ -70,7 +70,7 @@ const log = Tools.log;
                 });
             });
         } catch (error) {
-            print("Error running task: " + error);
+            print("Error running task: " + error.message);
         };
     };
 
