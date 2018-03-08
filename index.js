@@ -66,10 +66,14 @@ const log = Tools.log;
                 print('Creating new task : ' + configuration.ID);
                 log.info('Creating new task : ' + configuration.ID);
                 try {
-                    netl.taskManager.newTask(configuration, function(result) {
-                        log.info(result);
-                        print(result);
-                    });
+                    netl.taskManager.newTask(configuration)
+                        .then(function(result) {
+                            log.info(result);
+                            print(result);
+                        })
+                        .catch(function(error) {
+                            throw error;
+                        });
                 } catch (error) {
                     netl.taskManager.killTask(configuration.ID, function() {
                         throw new Error(`Error running task ${configuration.ID}. Task Killed: ` + error.stack);
