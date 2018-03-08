@@ -61,7 +61,10 @@ const log = Tools.log;
      */
     function loadTask(taskPath) {
         try {
+            /* Read Task configuration */
             var configFile = jsonfile.readFileSync(taskPath);
+
+            /* Load all tasks in the config file */
             configFile.forEach(function(configuration, i, arr) {
                 print('Creating new task : ' + configuration.ID);
                 log.info('Creating new task : ' + configuration.ID);
@@ -71,10 +74,14 @@ const log = Tools.log;
                         print(result);
                     })
                     .catch(function(error) {
-                        netl.taskManager.killTask(configuration.ID, function() {
-                            log.error(`Error running task ${configuration.ID}. Task Killed:\n` + error);
-                            print(`Error running task ${configuration.ID}. Task Killed:\n` + error);
-                        });
+                        netl.taskManager.killTask(configuration.ID)
+                            .then(function() {
+                                log.info(`Error running task ${configuration.ID}. Task Killed:\n` + error);
+                                print(`Error running task ${configuration.ID}. Task Killed:\n` + error);
+                            })
+                            .catch(function(error) {
+                                log.error(error);
+                            });
                     });
             });
         } catch (error) {
@@ -144,5 +151,6 @@ const log = Tools.log;
         handleInput(input);
     });
 
+    /* Potentially an alternative to the CLI */
     return {};
 })();
