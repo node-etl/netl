@@ -66,10 +66,12 @@ const log = Tools.log;
                 print('Creating new task : ' + configuration.ID);
                 log.info('Creating new task : ' + configuration.ID);
                 netl.taskManager.newTask(configuration, function(result) {
+                    log.info(result);
                     print(result);
                 });
             });
         } catch (error) {
+            log.error(error.message);
             print("Error running task: " + error.message);
         };
     };
