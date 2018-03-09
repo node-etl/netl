@@ -1,6 +1,6 @@
 {
     "name": "netl",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Configurable node.js ETL tool",
     "main": "index.js",
     "copyright": 2018,
