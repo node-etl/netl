@@ -60,34 +60,23 @@ const log = Tools.log;
      * @param {string} taskPath 
      */
     function loadTask(taskPath) {
+        /* Read Task configuration */
         try {
-            /* Read Task configuration */
             var configFile = jsonfile.readFileSync(taskPath);
-
-            /* Load all tasks in the config file */
-            configFile.forEach(function(configuration, i, arr) {
-                print('Creating new task : ' + configuration.ID);
-                log.info('Creating new task : ' + configuration.ID);
-                netl.taskManager.newTask(configuration)
-                    .then(function(result) {
-                        log.info(result);
-                        print(result);
-                    })
-                    .catch(function(error) {
-                        netl.taskManager.killTask(configuration.ID)
-                            .then(function() {
-                                log.info(`Error running task ${configuration.ID}. Task Killed:\n` + error);
-                                print(`Error running task ${configuration.ID}. Task Killed:\n` + error);
-                            })
-                            .catch(function(error) {
-                                log.error(error);
-                            });
-                    });
-            });
         } catch (error) {
             log.error("Error reading config file:\n" + error);
             print("Error reading config file:\n" + error);
         };
+
+        /* Load all tasks in the config file */
+        configFile.forEach(async function(configuration, i, arr) {
+            print('Creating new task : ' + configuration.ID);
+            log.info('Creating new task : ' + configuration.ID);
+            const taskResult = await netl.taskManager.doTask(configuration);
+            print(taskResult);
+            log.info(taskResult);
+        });
+
     };
 
     /**
