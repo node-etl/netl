@@ -7,139 +7,150 @@ const TaskManager = require('./lib/task-manager');
 const Tools = require('./lib/tools');
 const log = Tools.log;
 
-(function() {
-    // Start the application
-    const npmConfig = jsonfile.readFileSync("./package.json");
-    console.log();
-    print(`> ---------------------\n> ${npmConfig.name} V${npmConfig.version} © ${npmConfig.copyright}\n> ---------------------\n`);
 
-    // Set log path
-    const options = jsonfile.readFileSync("./netl.config.json");
-    const logPath = path.join(__dirname, options.log_path);
-    setLogPath(logPath);
+// Start the application
+const npmConfig = jsonfile.readFileSync("./package.json");
+console.log();
+print(`> ---------------------\n> ${npmConfig.name} V${npmConfig.version} © ${npmConfig.copyright}\n> ---------------------\n`);
 
-    // Load the task manager
-    const netl = TaskManager(options);
+// Set log path
+const options = jsonfile.readFileSync("./netl.config.json");
+const logPath = path.join(__dirname, options.log_path);
+setLogPath(logPath);
 
-    /* Load Extraction Modules */
-    options.extractions.forEach(function(filePath) {
-        netl.loadExtractionModule(require(filePath));
-    });
+// Load the task manager
+const netl = TaskManager(options);
 
-    /* Load Transformation Modules */
-    options.transformations.forEach(function(filePath) {
-        netl.loadTransformationModule(require(filePath));
-    });
-    /* Load Load Modules */
-    options.loads.forEach(function(filePath) {
-        netl.loadLoadModule(require(filePath));
-    });
+/* Load Extraction Modules */
+options.extractions.forEach(function(filePath) {
+    netl.loadExtractionModule(require(filePath));
+});
 
-    /*
-     ******************************************
-     ******************************************
-     ******************************************
-     ****************** CLI *******************
-     ******************************************
-     ******************************************
-     ******************************************
-     */
+/* Load Transformation Modules */
+options.transformations.forEach(function(filePath) {
+    netl.loadTransformationModule(require(filePath));
+});
+/* Load Load Modules */
+options.loads.forEach(function(filePath) {
+    netl.loadLoadModule(require(filePath));
+});
 
-    /**
-     * Sets log at at specified path
-     * @param {string} fPath 
-     */
-    function setLogPath(fPath) {
-        var r = log.setLogPath(fPath);
-        process.stdout.write(r + "\n> ");
+/*
+ ******************************************
+ ******************************************
+ ******************************************
+ ****************** CLI *******************
+ ******************************************
+ ******************************************
+ ******************************************
+ */
+
+/**
+ * Sets log at at specified path
+ * @param {string} fPath 
+ */
+function setLogPath(fPath) {
+    var r = log.setLogPath(fPath);
+    process.stdout.write(r + "\n> ");
+};
+
+/**
+ * Loads a JSON file from taskPath
+ * Executes tasks from JSON configuration
+ * @param {string} taskPath 
+ */
+function loadTask(taskPath) {
+    /* Read Task configuration */
+    try {
+        var configFile = jsonfile.readFileSync(taskPath);
+    } catch (error) {
+        log.error("Error reading config file:\n" + error);
+        print("Error reading config file:\n" + error);
+        return;
     };
 
-    /**
-     * Loads a JSON file from taskPath
-     * Executes tasks from JSON configuration
-     * @param {string} taskPath 
-     */
-    function loadTask(taskPath) {
-        /* Read Task configuration */
+    /* Load all tasks in the config file */
+    configFile.forEach(async(configuration, i, arr) => {
+
+        /* Create task */
+        print('Creating new task : ' + configuration.ID);
+        log.info('Creating new task : ' + configuration.ID);
+
+        /* Wait for task completion */
+        const taskResult = await netl.taskManager.doTask(configuration);
+        print(taskResult);
+        log.info(taskResult);
+
+        /* Delete task */
+        var killResult
         try {
-            var configFile = jsonfile.readFileSync(taskPath);
+            killResult = await netl.taskManager.killTask(configuration.ID);
         } catch (error) {
-            log.error("Error reading config file:\n" + error);
-            print("Error reading config file:\n" + error);
+            killResult = "Error killing task: " + error;
         };
-
-        /* Load all tasks in the config file */
-        configFile.forEach(async function(configuration, i, arr) {
-            print('Creating new task : ' + configuration.ID);
-            log.info('Creating new task : ' + configuration.ID);
-            const taskResult = await netl.taskManager.doTask(configuration);
-            print(taskResult);
-            log.info(taskResult);
-        });
-
-    };
-
-    /**
-     * Prints to the console in a friendly way
-     * @param {string} msg 
-     */
-    function print(msg) {
-        if (msg) {
-            process.stdout.write(msg + "\n> ");
-        } else {
-            process.stdout.write("\n> ");
-        };
-    };
-
-    /**
-     * Interacts with the nETL module
-     * @param {string} input 
-     */
-    function handleInput(input) {
-        process.stdout.write("> ");
-        var inputs = input.split(' ');
-        var cmd = inputs[0].toUpperCase();
-        var cmd2;
-        var fPath;
-        switch (cmd) {
-            case 'LOAD':
-                cmd2 = (inputs[1]) ? inputs[1].toUpperCase() : null;
-                switch (cmd2) {
-                    case 'TASK':
-                        fPath = (inputs[2]) ? path.join(__dirname, inputs[2]) : null;
-                        if (fPath) {
-                            loadTask(fPath);
-                            break;
-                        };
-                    default:
-                        print("Incorrect argument for 'LOAD': 'load task <path>'");
-                        break;
-                };
-                break;
-            case 'SETLOG':
-                fPath = (inputs[1]) ? inputs[1] : null;
-                if (fPath) {
-                    setLogPath(fPath);
-                    break;
-                }
-                break
-            default:
-                print();
-                print("Unknown CMD. Available commands are:");
-                print('1. load task <file>');
-                print('2. setlog <file>');
-        };
-    };
-
-    // Start the CLI
-    const readline = require('readline');
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    }).on('line', (input) => {
-        handleInput(input);
+        print(killResult);
+        log.info(killResult);
     });
 
-    /* Potentially an alternative to the CLI */
-    return {};
-})();
+};
+
+/**
+ * Prints to the console in a friendly way
+ * @param {string} msg 
+ */
+function print(msg) {
+    if (msg) {
+        process.stdout.write(msg + "\n> ");
+    } else {
+        process.stdout.write("\n> ");
+    };
+};
+
+/**
+ * Interacts with the nETL module
+ * @param {string} input 
+ */
+function handleInput(input) {
+    process.stdout.write("> ");
+    var inputs = input.split(' ');
+    var cmd = inputs[0].toUpperCase();
+    var cmd2;
+    var fPath;
+    switch (cmd) {
+        case 'LOAD':
+            cmd2 = (inputs[1]) ? inputs[1].toUpperCase() : null;
+            switch (cmd2) {
+                case 'TASK':
+                    fPath = (inputs[2]) ? path.join(__dirname, inputs[2]) : null;
+                    if (fPath) {
+                        loadTask(fPath);
+                        break;
+                    };
+                default:
+                    print("Incorrect argument for 'LOAD': 'load task <path>'");
+                    break;
+            };
+            break;
+        case 'SETLOG':
+            fPath = (inputs[1]) ? inputs[1] : null;
+            if (fPath) {
+                setLogPath(fPath);
+                break;
+            }
+            break
+        default:
+            print();
+            print("Unknown CMD. Available commands are:");
+            print('1. load task <file>');
+            print('2. setlog <file>');
+    };
+};
+
+// Start the CLI
+const readline = require('readline');
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+}).on('line', (input) => {
+    handleInput(input);
+});
