@@ -25,6 +25,7 @@ function print(msg) {
  */
 function setLogPath(fPath) {
     var r = log.setLogPath(fPath);
+    log.logPath = r;
 };
 
 /**
@@ -66,6 +67,46 @@ function loadTask(taskPath) {
     });
 };
 
+/**
+ * Interacts with the nETL module
+ * @param {string} input 
+ */
+function handleInput(input) {
+    process.stdout.write("> ");
+    var inputs = input.split(' ');
+    var cmd = inputs[0].toUpperCase();
+    var cmd2;
+    var fPath;
+    switch (cmd) {
+        case 'LOAD':
+            cmd2 = (inputs[1]) ? inputs[1].toUpperCase() : null;
+            switch (cmd2) {
+                case 'FILE':
+                    fPath = (inputs[2]) ? path.normalize(inputs[2]) : null;
+                    if (fPath) {
+                        loadTask(fPath);
+                        break;
+                    };
+                default:
+                    print("Incorrect argument for 'LOAD': 'load file <path>'");
+                    break;
+            };
+            break;
+        case 'SETLOG':
+            fPath = (inputs[1]) ? inputs[1] : null;
+            if (fPath) {
+                setLogPath(fPath);
+                break;
+            }
+            break
+        default:
+            print();
+            print("Unknown CMD. Available commands are:");
+            print('1. load file <file>');
+            print('2. setlog <file>');
+    };
+};
+
 // Package info
 const npmConfig = jsonfile.readFileSync(path.resolve(__dirname, "./package.json"));
 
@@ -79,6 +120,7 @@ if (userOptions.logPath) setLogPath(path.normalize(userOptions.logPath));
 
 // Log start of app
 log.info(`*** Started ${npmConfig.name} V${npmConfig.version} © ${npmConfig.copyright}`);
+log.info(`Timestamps in UTC time`)
 console.log();
 print(`> ---------------------\n> ${npmConfig.name} V${npmConfig.version} © ${npmConfig.copyright}\n> ---------------------\n`);
 
@@ -104,54 +146,16 @@ packageOptions.loads.concat((userOptions.transformations || [])).forEach(functio
  ******************************************
  */
 module.exports = (() => {
-    /**
-     * Interacts with the nETL module
-     * @param {string} input 
-     */
-    function handleInput(input) {
-        process.stdout.write("> ");
-        var inputs = input.split(' ');
-        var cmd = inputs[0].toUpperCase();
-        var cmd2;
-        var fPath;
-        switch (cmd) {
-            case 'LOAD':
-                cmd2 = (inputs[1]) ? inputs[1].toUpperCase() : null;
-                switch (cmd2) {
-                    case 'FILE':
-                        fPath = (inputs[2]) ? path.normalize(inputs[2]) : null;
-                        if (fPath) {
-                            loadTask(fPath);
-                            break;
-                        };
-                    default:
-                        print("Incorrect argument for 'LOAD': 'load task <path>'");
-                        break;
-                };
-                break;
-            case 'SETLOG':
-                fPath = (inputs[1]) ? inputs[1] : null;
-                if (fPath) {
-                    setLogPath(fPath);
-                    break;
-                }
-                break
-            default:
-                print();
-                print("Unknown CMD. Available commands are:");
-                print('1. load file <file>');
-                print('2. setlog <file>');
-        };
-    };
 
     // Start the CLI
-    return () => {
-        const readline = require('readline');
-        const rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout
-        }).on('line', (input) => {
-            handleInput(input);
-        });
-    };
+    const readline = require('readline');
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    }).on('line', (input) => {
+        handleInput(input);
+    });
+
+    // Return the task manager
+    return netl;
 })();
