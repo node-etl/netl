@@ -8,6 +8,18 @@ path.sep = "/";
 __dirname = __dirname.split(/\\/g).join('/');
 
 /**
+ * Prints to the console in a friendly way
+ * @param {string} msg 
+ */
+function print(msg) {
+    if (msg) {
+        process.stdout.write(msg + "\n> ");
+    } else {
+        process.stdout.write("\n> ");
+    };
+};
+
+/**
  * Sets log at at specified path
  * @param {string} fPath 
  */
@@ -26,6 +38,7 @@ function loadTask(taskPath) {
         var configFile = jsonfile.readFileSync(taskPath);
     } catch (error) {
         log.error("Error reading config file:\n" + error);
+        print("Error reading config file:\n" + error);
         return;
     };
 
@@ -33,11 +46,13 @@ function loadTask(taskPath) {
     configFile.forEach(async(configuration, i, arr) => {
 
         /* Create task */
-        log.info('Creating new task : ' + configuration.ID);
+        log.info(`Creating new task : ${configuration.ID}`);
+        print(`Creating new task : ${configuration.ID} (logging to ${log.logPath})`);
 
         /* Wait for task completion */
         const taskResult = await netl.taskManager.doTask(configuration);
         log.info(taskResult);
+        print(taskResult);
 
         /* Delete task */
         var killResult
@@ -47,6 +62,7 @@ function loadTask(taskPath) {
             killResult = "Error killing task: " + error;
         };
         log.info(killResult);
+        print(killResult);
     });
 };
 
@@ -63,6 +79,8 @@ if (userOptions.logPath) setLogPath(path.normalize(userOptions.logPath));
 
 // Log start of app
 log.info(`*** Started ${npmConfig.name} V${npmConfig.version} © ${npmConfig.copyright}`);
+console.log();
+print(`> ---------------------\n> ${npmConfig.name} V${npmConfig.version} © ${npmConfig.copyright}\n> ---------------------\n`);
 
 // Start standard library
 const netl = TaskManager(packageOptions);
@@ -100,8 +118,8 @@ module.exports = (() => {
             case 'LOAD':
                 cmd2 = (inputs[1]) ? inputs[1].toUpperCase() : null;
                 switch (cmd2) {
-                    case 'TASK':
-                        fPath = (inputs[2]) ? path.join(__dirname, inputs[2]) : null;
+                    case 'FILE':
+                        fPath = (inputs[2]) ? path.normalize(inputs[2]) : null;
                         if (fPath) {
                             loadTask(fPath);
                             break;
@@ -121,7 +139,7 @@ module.exports = (() => {
             default:
                 print();
                 print("Unknown CMD. Available commands are:");
-                print('1. load task <file>');
+                print('1. load file <file>');
                 print('2. setlog <file>');
         };
     };

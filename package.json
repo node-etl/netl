@@ -1,6 +1,6 @@
 {
     "name": "netl",
-    "version": "1.1.0",
+    "version": "0.0.2",
     "description": "Configurable node.js ETL tool",
     "main": "index.js",
     "copyright": 2018,
@@ -29,7 +29,7 @@
         "netl"
     ],
     "author": "Zach Smith",
-    "license": "MIT",
+    "license": "Apache 2.0",
     "bugs": {
         "url": "https://github.com/node-etl/netl/issues"
     },
