@@ -126,15 +126,26 @@ print(`> ---------------------\n> ${npmConfig.name} V${npmConfig.version} © ${n
 
 // Start standard library
 const netl = TaskManager(packageOptions);
-packageOptions.extractions.concat((userOptions.extractions || [])).forEach(function(filePath) {
-    netl.loadExtractionModule(require(filePath));
-});
-packageOptions.transformations.concat((userOptions.transformations || [])).forEach(function(filePath) {
-    netl.loadTransformationModule(require(filePath));
-});
-packageOptions.loads.concat((userOptions.transformations || [])).forEach(function(filePath) {
-    netl.loadLoadModule(require(filePath));
-});
+packageOptions.extractions
+    .concat((userOptions.extractions || []).map((p) => path.join(process.cwd(), p)))
+    .forEach((filePath) => {
+        netl.loadExtractionModule(require(filePath));
+    });
+packageOptions.transformations
+    .concat((userOptions.transformations || []).map((p) => path.join(process.cwd(), p)))
+    .forEach((filePath) => {
+        netl.loadTransformationModule(require(filePath));
+    });
+packageOptions.loads
+    .concat((userOptions.loads || []).map((p) => path.join(process.cwd(), p)))
+    .forEach((filePath) => {
+        netl.loadLoadModule(require(filePath));
+    });
+packageOptions.functions
+    .concat((userOptions.functions || []).map((p) => path.join(process.cwd(), p)))
+    .forEach((filePath) => {
+        netl.loadFunctionModule(require(filePath));
+    });
 
 /*
  ******************************************

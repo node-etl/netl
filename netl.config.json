@@ -13,5 +13,8 @@
     "loads": [
         "./lib/loads/couchdb",
         "./lib/loads/mysql"
+    ],
+    "functions": [
+        "./lib/functions/sp-execute-mysql"
     ]
 }
