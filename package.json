@@ -1,6 +1,6 @@
 {
     "name": "netl",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Configurable node.js ETL tool",
     "main": "index.js",
     "copyright": 2018,
@@ -9,13 +9,13 @@
         "test": "test"
     },
     "dependencies": {
-        "csv-parse": "^2.0.4",
+        "csv-parse": "^2.5.0",
         "jsonfile": "^4.0.0",
         "mysql": "^2.15.0",
-        "request": "^2.83.0"
+        "request": "^2.87.0"
     },
     "devDependencies": {
-        "mocha": "^5.0.3"
+        "mocha": "^5.2.0"
     },
     "scripts": {
         "test": "mocha"
