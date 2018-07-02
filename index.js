@@ -108,14 +108,14 @@ function handleInput(input) {
 };
 
 // Package info
-const npmConfig = jsonfile.readFileSync(path.resolve(__dirname, "./package.json"));
+const npmConfig = jsonfile.readFileSync(path.join(__dirname, "./package.json"));
 
 // Set package options
-const packageOptions = jsonfile.readFileSync(path.resolve(__dirname, "./netl.config.json"));
+const packageOptions = jsonfile.readFileSync(path.join(__dirname, "./netl.config.json"));
 setLogPath(path.normalize(packageOptions.logPath));
 
 // Overwrite package options with user options
-const userOptions = jsonfile.readFileSync("./netl.config.json");
+const userOptions = jsonfile.readFileSync(path.join(process.cwd(), "./netl.config.json"));
 if (userOptions.logPath) setLogPath(path.normalize(userOptions.logPath));
 
 // Log start of app
