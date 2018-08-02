@@ -8,11 +8,13 @@
         "./lib/transformations/dynamic-filter-obj",
         "./lib/transformations/filter-obj",
         "./lib/transformations/filter-obj-attributes",
-        "./lib/transformations/text-line-to-obj"
+        "./lib/transformations/text-line-to-obj",
+        "./lib/transformations/redact-csv"
     ],
     "loads": [
         "./lib/loads/couchdb",
-        "./lib/loads/mysql"
+        "./lib/loads/mysql",
+        "./lib/loads/txt"
     ],
     "functions": [
         "./lib/functions/sql-execute-mysql"

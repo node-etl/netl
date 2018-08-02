@@ -8,6 +8,9 @@ const path = require('path').posix;
 path.sep = "/";
 __dirname = __dirname.split(/\\/g).join('/');
 
+// Setup environment variables
+process.env["CLI"] = false;
+
 // Package info
 const npmConfig = jsonfile.readFileSync(path.join(__dirname, "./package.json"));
 
@@ -56,12 +59,17 @@ module.exports = (() => {
 
     // Get process flags and arguments
     var args = require('minimist')(process.argv.slice(2));
+    if (!args.task && !args.cli) throw new Error("Either CLI flag (--cli) or task argument (--task <path>) is required");
+
+    // Start the CLI or just run the specified task file(s)
     if (args.cli) {
+        process.env["CLI"] = true;
         console.log();
         log.console(`> ---------------------\n> ${npmConfig.name} V${npmConfig.version} © ${npmConfig.copyright}\n> ---------------------\n`);
         CLI.start();
     } else {
-        if (!args.task) throw new Error("Either CLI flag (--cli) or task argument (--task <path>) is required");
-        CLI.loadTask(path.join(process.cwd(), args.task));
+        args.task.split(",").forEach((taskFilePath) => {
+            CLI.loadTask(path.normalize(taskFilePath));
+        });
     };
 })();
