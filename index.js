@@ -119,7 +119,7 @@ var userOptions;
 try {
     userOptions = jsonfile.readFileSync(path.join(process.cwd(), "./netl.config.json"));
 } catch (error) {
-    log.warn(`Error loading user-defined netl configuration options. Unable to open ${path.join(process.cwd(), "./netl.config.json")}`);
+    log.warn(`Error loading user-defined netl configuration options. Error reading path: ${path.join(process.cwd(), "./netl.config.json")}`);
     userOptions = {};
 };
 if (userOptions.logPath) setLogPath(path.normalize(userOptions.logPath));
