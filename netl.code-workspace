@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"name": "netl",
+			"path": "."
+		}
+	],
+    "settings": {
+		"cSpell.enabled": true,
+		"cSpell.words": [
+		]
+	},
+	"launch": {
+		"configurations": [{
+			"type": "node",
+			"request": "launch",
+			"name": "nETL",
+			"program": "${workspaceFolder:netl}/index.js"
+		}],
+		"compounds": []
+	}
+}
