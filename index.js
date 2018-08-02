@@ -25,12 +25,6 @@ try {
 };
 if (userOptions.logPath) log.setLogPath(path.normalize(userOptions.logPath));
 
-// Log start of app
-log.info(`*** Started ${npmConfig.name} V${npmConfig.version} © ${npmConfig.copyright}`);
-log.info(`Timestamps in UTC time`)
-console.log();
-log.console(`> ---------------------\n> ${npmConfig.name} V${npmConfig.version} © ${npmConfig.copyright}\n> ---------------------\n`);
-
 // Start standard library
 const netl = TaskManager(packageOptions);
 packageOptions.extractions
@@ -56,9 +50,18 @@ packageOptions.functions
 
 module.exports = (() => {
 
-    // Start the CLI
-    CLI.start();
+    // Log start of app
+    log.info(`*** Started ${npmConfig.name} V${npmConfig.version} © ${npmConfig.copyright}`);
+    log.info(`Timestamps in UTC time`);
 
-    // Return the task manager
-    return netl;
+    // Get process flags and arguments
+    var args = require('minimist')(process.argv.slice(2));
+    if (args.cli) {
+        console.log();
+        log.console(`> ---------------------\n> ${npmConfig.name} V${npmConfig.version} © ${npmConfig.copyright}\n> ---------------------\n`);
+        CLI.start();
+    } else {
+        if (!args.task) throw new Error("Either CLI flag (--cli) or task argument (--task <path>) is required");
+        CLI.loadTask(path.join(process.cwd(), args.task));
+    };
 })();
