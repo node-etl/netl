@@ -114,8 +114,14 @@ const npmConfig = jsonfile.readFileSync(path.join(__dirname, "./package.json"));
 const packageOptions = jsonfile.readFileSync(path.join(__dirname, "./netl.config.json"));
 setLogPath(path.normalize(packageOptions.logPath));
 
-// Overwrite package options with user options
-const userOptions = jsonfile.readFileSync(path.join(process.cwd(), "./netl.config.json"));
+// Overwrite package options with user options (if there are user options)
+var userOptions;
+try {
+    userOptions = jsonfile.readFileSync(path.join(process.cwd(), "./netl.config.json"));
+} catch (error) {
+    log.warn(`Error loading user-defined netl configuration options. Unable to open ${path.join(process.cwd(), "./netl.config.json")}`);
+    userOptions = {};
+};
 if (userOptions.logPath) setLogPath(path.normalize(userOptions.logPath));
 
 // Log start of app
