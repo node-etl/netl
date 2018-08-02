@@ -11,7 +11,7 @@
     "dependencies": {
         "csv-parse": "^2.5.0",
         "jsonfile": "^4.0.0",
-        "mysql": "^2.15.0",
+        "mysql": "^2.16.0",
         "request": "^2.87.0"
     },
     "devDependencies": {
